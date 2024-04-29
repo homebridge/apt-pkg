@@ -15,12 +15,11 @@ fi
 rm -rf staging
 cp -R deb staging
 
-# Hold the NodeJS version to the 18.x LTS stream until spring of 2024, then switch to `Iron` aka 20.0 LTS
+# Hold the NodeJS version to the 20.x LTS stream until 22 goes LTS
+# deb/debian/control `libc6 (>= 2.31)` may need updating as well
 
-NODE_LTS_TAG="Hydrogen"
+NODE_LTS_TAG="Iron"
 NODE_VERSION="$(curl -s https://nodejs.org/dist/index.json | jq -r --arg NODE_LTS_TAG "${NODE_LTS_TAG}" 'map(select(.lts==$NODE_LTS_TAG))[0].version')"
-
-
 
 BUILD_ARCH=${QEMU_ARCH:-x86_64}
 
