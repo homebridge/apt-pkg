@@ -177,3 +177,15 @@ jobs:
     secrets:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+
+  github-releases-to-discord:
+    name: Discord Webhooks
+    needs: [tag,release_type,build,update-apt-repo,purge_cloudflare_cache]
+    uses: homebridge/.github/.github/workflows/discord-webhooks.yml@latest
+    with:
+      title: "Homebridge APT Package Release"
+      description: |
+        Version `${{ needs.tag.outputs.version }}`
+      url: "https://github.com/homebridge/homebridge-apt-pkg/releases/tag/${{ needs.tag.outputs.version }}"
+    secrets:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL_LATEST }}
