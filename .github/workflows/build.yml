@@ -7,7 +7,7 @@ on:
 
 jobs:
   tag:
-    name: Verify Release Tag
+    name: Release Tag
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get_version.outputs.version }}
@@ -95,6 +95,14 @@ jobs:
       run: |
         docker run --rm -v $(pwd):/repo -e PKG_RELEASE_TYPE="${{ needs.release_type.outputs.release_type }}" -e PKG_RELEASE_VERSION="${{ needs.tag.outputs.version }}" package-build
 
+    - name: Rename package to include v
+      run: |
+        mv *.deb homebridge_v${{ needs.tag.outputs.version }}_${{ matrix.QEMU_ARCH }}.deb
+
+    - name: Rename manifest to include v
+      run: |
+        mv *.manifest homebridge_v${{ needs.tag.outputs.version }}_${{ matrix.QEMU_ARCH }}.manifest
+
     - name: Set variables
       run: |
         echo BODY_FILE="$(ls *.manifest)" >> $GITHUB_ENV
@@ -103,7 +111,7 @@ jobs:
       uses: tubone24/update_release@v1.3.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: ${{ needs.tag.outputs.version }}
+        TAG_NAME: v${{ needs.tag.outputs.version }}
       with:
         is_append_body: "Contents of ${{ matrix.QEMU_ARCH }} Package." 
 
@@ -111,7 +119,7 @@ jobs:
       uses: tubone24/update_release@v1.3.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: ${{ needs.tag.outputs.version }}
+        TAG_NAME: v${{ needs.tag.outputs.version }}
       with:
         body_path: ${{ env.BODY_FILE }}
 
@@ -119,7 +127,7 @@ jobs:
       with:
         files: '*.deb;*.manifest'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        release-tag: ${{ needs.tag.outputs.version }}
+        release-tag: v${{ needs.tag.outputs.version }}
 
   update-apt-repo:
     name: Publish to Repo
@@ -134,7 +142,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        tag: ${{ needs.tag.outputs.version }}
+        tag: v${{ needs.tag.outputs.version }}
 
     - name: Download release assets
       uses: dsaltares/fetch-gh-release-asset@0.0.8
@@ -185,7 +193,7 @@ jobs:
     with:
       title: "Homebridge APT Package Release"
       description: |
-        Version `${{ needs.tag.outputs.version }}`
-      url: "https://github.com/homebridge/homebridge-apt-pkg/releases/tag/${{ needs.tag.outputs.version }}"
+        Version `v${{ needs.tag.outputs.version }}`
+      url: "https://github.com/homebridge/homebridge-apt-pkg/releases/tag/v${{ needs.tag.outputs.version }}"
     secrets:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL_LATEST }}
