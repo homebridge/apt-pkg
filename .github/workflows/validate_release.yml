@@ -26,3 +26,7 @@ jobs:
           sudo echo "deb [signed-by=/usr/share/keyrings/homebridge.gpg] https://repo.homebridge.io stable main" | sudo tee /etc/apt/sources.list.d/homebridge.list > /dev/null
           sudo apt-get update
           sudo apt-get install homebridge
+
+      - name: Validate Homebridge
+        run: |
+          sudo hb-service status
