@@ -97,11 +97,13 @@ jobs:
 
     - name: Rename package to include v
       run: |
-        mv *.deb homebridge_v${{ needs.tag.outputs.version }}_${{ matrix.QEMU_ARCH }}.deb
+        UPDATED=$(ls homebridge*.deb | sed -e 's/homebridge_/homebridge_v/g')
+        mv homebridge_*.deb ${UPDATED}
 
     - name: Rename manifest to include v
       run: |
-        mv *.manifest homebridge_v${{ needs.tag.outputs.version }}_${{ matrix.QEMU_ARCH }}.manifest
+        UPDATED=$(ls homebridge*.manifest | sed -e 's/homebridge_/homebridge_v/g')
+        mv homebridge_*.manifest ${UPDATED}
 
     - name: Set variables
       run: |
