@@ -13,11 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - run: echo 'The triggering workflow passed'
+      - run: echo '::info::The triggering workflow passed'
 
   validate:
     name: Validate Release
-    needs: [on-success]
     runs-on: ubuntu-latest
     steps:
       - name: Install Homebridge
