@@ -3,7 +3,7 @@ name: "On PR Merged"
 on:
   push:
     branches:
-      - main
+      - latest
       - paths
           - 'package.json'
 
@@ -14,7 +14,7 @@ jobs:
     steps:
     - run: |
         echo The PR was merged
-        
+
   print_context:
     runs-on: ubuntu-latest
     steps:
