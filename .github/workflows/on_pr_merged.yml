@@ -3,7 +3,7 @@ name: "On PR Merged"
 on:
   push:
     branches:
-      - main
+      - latest
       - paths
           - 'package.json'
 
