@@ -1,0 +1,52 @@
+name: "Validate github prerelease post build"
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Build Release and Publish to DEB Repo]
+    types:
+      - completed
+
+jobs:
+  on-success:
+    name: On Success
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - run: echo '::info::The triggering workflow passed'
+
+  download_prerelease_assets:
+    name: Download Latest Pre Release Assets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download prerelease assets
+        id: download_prerelease_assets
+        uses: robinraju/release-downloader@v1
+        with:
+          # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
+          # Required, if the artifact is from a different repo
+          # Required, if the repo is private a Personal Access Token with `repo` scope is needed or GitHub token in a job where the permissions `action` scope set to `read`
+          latest: true
+          preRelease: true
+      
+      - name: List the downloaded files
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+
+
+
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Homebridge
+        run: |
+          sudo curl -sSfL https://repo.homebridge.io/KEY.gpg | sudo gpg --dearmor | sudo tee /usr/share/keyrings/homebridge.gpg  > /dev/null
+          sudo echo "deb [signed-by=/usr/share/keyrings/homebridge.gpg] https://repo.homebridge.io stable main" | sudo tee /etc/apt/sources.list.d/homebridge.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install homebridge
+
+      - name: Validate Homebridge
+        run: |
+          sudo hb-service status
