@@ -28,8 +28,7 @@ jobs:
           # Required, if the repo is private a Personal Access Token with `repo` scope is needed or GitHub token in a job where the permissions `action` scope set to `read`
           latest: true
           preRelease: true
-          tarBall: true
-          zipBall: true
+          fileName: 'homebridge*.deb'
       
       - name: List the downloaded files
         env:
