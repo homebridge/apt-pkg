@@ -2,7 +2,6 @@ name: "Promote Release package to APT Stores"
 
 on:
   release:
-    types: [published]
 
 jobs:
   print_context:
@@ -47,6 +46,7 @@ jobs:
 
   tag:
     name: Release Tag
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get_version.outputs.version }}
