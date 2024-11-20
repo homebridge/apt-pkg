@@ -17,17 +17,23 @@ jobs:
       pull-requests: write
     if: ${{ github.event.head_commit.author.username == 'NorthernMan54' }}
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.drafter.outputs.tag_name }}
     steps:
     - run: |
         echo The PR was merged
 
     - uses: release-drafter/release-drafter@v6
+      id: drafter
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
   build_package_and_store:
     needs: if_merged
     uses: ./.github/workflows/_build_package_and_store.yml
+    with:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      version: ${{ needs.if_merged.outputs.version }}
 
   print_context:
     runs-on: ubuntu-latest

@@ -1,52 +1,59 @@
 name: "Build Package and Store in Latest Release"
-on: workflow_call
+on: 
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        description: 'The version of the release'
+        required: true
+        default: '0.0.0'
+      release_type:
+        type: string
+        description: 'The type of release'
+        required: false
+        default: 'stable'
 
 jobs:
-  tag:
-    name: Release Tag
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.get_version.outputs.version }}
-    steps:
-      - name: Get Release Tag
-        id: get_version
-        uses: jannemattila/get-version-from-tag@v3
-      - name: Tag Info
-        run: |
-          echo "Release Tag: ${{github.ref}}"
-          echo "Latest Tag: ${{ steps.get_version.outputs.version }}"
-      - name: Tag Info Matches
-        if: endsWith(github.ref, steps.get_version.outputs.version )
-        run: |
-          echo Latest Tag matches Release tag
-      - name: Tag Info Doesn't Match
-        if: ${{ !endsWith(github.ref, steps.get_version.outputs.version ) }}
-        run: |
-          echo Latest Tag does not matches Release tag
-          exit 1
 
-  release_type:
-    name: Release Type
-    needs: tag
+  print_context:
     runs-on: ubuntu-latest
-    outputs:
-      release_type: ${{ steps.stable_release.outputs.release_type || steps.test_release.outputs.release_type }}
     steps:
-      - name: Release Type - stable
-        id: stable_release
-        if: ${{ github.event.release.prerelease == false }}
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+      - name: Dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+      - name: Dump strategy context
+        env:
+          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
+        run: echo "$STRATEGY_CONTEXT"
+      - name: Dump matrix context
+        env:
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
+        run: echo "$MATRIX_CONTEXT"
+
+      - name: Show default environment variables
         run: |
-          echo "release_type=stable" >> "$GITHUB_OUTPUT"
-      - name: Release Type - test
-        id: test_release
-        if: ${{ github.event.release.prerelease == true }}
-        run: |
-          echo "release_type=test" >> "$GITHUB_OUTPUT"
+          echo "The job_id is: $GITHUB_JOB"   # reference the default environment variables
+          echo "The id of this action is: $GITHUB_ACTION"   # reference the default environment variables
+          echo "The run id is: $GITHUB_RUN_ID"
+          echo "The GitHub Actor's username is: $GITHUB_ACTOR"
+          echo "GitHub SHA: $GITHUB_SHA"
 
 
   build:
-    needs: [tag, release_type]
-    name: Build Packages for (${{ matrix.name }}) v${{ needs.tag.outputs.version }}
+    name: Build Packages for (${{ matrix.name }}) v${{ github.event.inputs.version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -90,7 +97,7 @@ jobs:
     - name: Linux - Build Package
       if: runner.os == 'Linux'
       run: |
-        docker run --rm -v $(pwd):/repo -e PKG_RELEASE_TYPE="${{ needs.release_type.outputs.release_type }}" -e PKG_RELEASE_VERSION="${{ needs.tag.outputs.version }}" package-build
+        docker run --rm -v $(pwd):/repo -e PKG_RELEASE_TYPE="${{ github.event.inputs.release_type }}" -e PKG_RELEASE_VERSION="${{ github.event.inputs.version }}" package-build
 
     - name: Rename package to include v
       run: |
@@ -110,7 +117,7 @@ jobs:
       uses: tubone24/update_release@v1.3.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: v${{ needs.tag.outputs.version }}
+        TAG_NAME: v${{ github.event.inputs.version }}
       with:
         is_append_body: "Contents of ${{ matrix.QEMU_ARCH }} Package." 
 
@@ -118,7 +125,7 @@ jobs:
       uses: tubone24/update_release@v1.3.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: v${{ needs.tag.outputs.version }}
+        TAG_NAME: v${{ github.event.inputs.version }}
       with:
         body_path: ${{ env.BODY_FILE }}
 
@@ -126,4 +133,4 @@ jobs:
       with:
         files: '*.deb;*.manifest'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        release-tag: v${{ needs.tag.outputs.version }}
+        release-tag: v${{ github.event.inputs.version }}
