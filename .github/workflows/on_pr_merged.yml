@@ -24,12 +24,10 @@ jobs:
     - uses: release-drafter/release-drafter@v6
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - uses: actions/checkout@v4
-      with:
-        ref: latest
-      
-    - uses: ./.github/workflows/_build_package_and_store.yml
+  
+  build_package_and_store:
+    needs: if_merged
+    uses: ./.github/workflows/_build_package_and_store.yml
 
   print_context:
     runs-on: ubuntu-latest
