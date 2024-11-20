@@ -32,7 +32,6 @@ jobs:
     needs: if_merged
     uses: ./.github/workflows/_build_package_and_store.yml
     with:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       version: ${{ needs.if_merged.outputs.version }}
 
   print_context:
