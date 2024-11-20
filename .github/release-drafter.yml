@@ -52,3 +52,5 @@ template: |
   
   ## Other Changes
   $CHANGES
+
+prerelease: true

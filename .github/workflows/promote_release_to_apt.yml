@@ -2,7 +2,7 @@ name: "Promote Release package to APT Stores"
 
 on:
   release:
-    types: [released]
+    types: [published]
 
 jobs:
   print_context:

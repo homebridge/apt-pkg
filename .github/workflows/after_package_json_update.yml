@@ -47,12 +47,12 @@ jobs:
     needs: [build_package_and_store, if_merged]
     runs-on: ubuntu-latest
     steps:
-      - name: Set as a Pre-release
-        uses: irongut/EditRelease@v1.2.0
+      - uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          id: ${{ needs.if_merged.outputs.release_id }}
-          prerelease: true
+          release_id: ${{ needs.if_merged.outputs.release_id }}
+
 
   print_context:
     runs-on: ubuntu-latest
