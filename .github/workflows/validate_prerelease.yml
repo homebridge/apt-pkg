@@ -61,6 +61,7 @@ jobs:
 
       - name: Validate Homebridge Service
         run: |
+          sudo hb-service view
           sudo hb-service status
           
       - name: stop HB
@@ -69,5 +70,6 @@ jobs:
 
       - name: Validate Homebridge Service
         run: |
+          sudo hb-service view
           sudo hb-service status
       
