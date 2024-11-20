@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - latest
-      - paths
-          - package.json
+    paths:
+      - package.json
 
 jobs:
   if_merged:
