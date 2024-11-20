@@ -25,6 +25,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - uses: actions/checkout@v4
+      with:
+        ref: latest
+      
     - name: build
       uses: ./.github/build_package_and_store.yml
 
