@@ -30,7 +30,7 @@ jobs:
         ref: latest
       
     - name: build
-      uses: ./.github/build_package_and_store.yml
+      uses: ./.github/workflows/build_package_and_store.yml
 
   print_context:
     runs-on: ubuntu-latest

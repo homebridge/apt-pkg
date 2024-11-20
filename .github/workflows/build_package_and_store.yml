@@ -43,9 +43,9 @@ jobs:
         run: |
           echo "release_type=test" >> "$GITHUB_OUTPUT"
 
-jobs:
-  needs: [tag, release_type]
+
   build:
+    needs: [tag, release_type]
     name: Build Packages for (${{ matrix.name }}) v${{ needs.tag.outputs.version }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -73,7 +73,7 @@ jobs:
             QEMU_ARCH: aarch64
 
     steps: 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Linux - Setup Dependencies
       if: runner.os == 'Linux'
