@@ -1,9 +1,9 @@
-name: "Validate apt pkg release post build and publish "
+name: "Validate apt pkg release post build and publish"
 
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: [Build Release and Publish to DEB Repo]
+    workflows: [Promote Release package to APT Stores]
     types:
       - completed
 
