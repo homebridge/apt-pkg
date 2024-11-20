@@ -57,6 +57,7 @@ jobs:
       - name: Install the downloaded package
         run: |
           sudo dpkg -i homebridge_v1.3.10_amd64.deb || sudo apt-get install -f -y
+          sleep 30
 
       - name: Validate Homebridge Service
         run: |
