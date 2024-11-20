@@ -5,15 +5,28 @@ on:
     branches:
       - latest
       - paths
-          - 'package.json'
+          - package.json
 
 jobs:
-  if_merged:  
+  if_merged:
+    permissions:
+      # write permission is required to create a github release
+      contents: write
+      # write permission is required for autolabeler
+      # otherwise, read permission is required at least
+      pull-requests: write
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - run: |
         echo The PR was merged
+
+    - uses: release-drafter/release-drafter@v6
+      env:
+        GITHUB_TOKEN: ${{ secrets.token }}
+
+    - name: build
+      uses: ./.github/build_package_and_store.yml
 
   print_context:
     runs-on: ubuntu-latest
