@@ -1,31 +1,17 @@
-name: "Validate github prerelease post build"
-
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [Build Release and Publish to DEB Repo]
-    types:
-      - completed
+  release:
+    types: [prereleased]
 
 jobs:
-  on-success:
-    name: On Success
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    steps:
-      - run: echo '::info::The triggering workflow passed'
-
   download_prerelease_assets:
-    name: Download Latest Pre Release Assets
+    name: Download Latest Pre-Release Assets
     runs-on: ubuntu-latest
     steps:
       - name: Download prerelease assets
-        id: download_prerelease_assets
+        id: download_assets
         uses: robinraju/release-downloader@v1.11
         with:
-          # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
-          # Required, if the artifact is from a different repo
-          # Required, if the repo is private a Personal Access Token with `repo` scope is needed or GitHub token in a job where the permissions `action` scope set to `read`
           latest: true
           preRelease: true
           fileName: 'homebridge*.deb'
@@ -35,4 +21,15 @@ jobs:
           STEPS_CONTEXT: ${{ toJson(steps) }}
         run: echo "$STEPS_CONTEXT"
 
+      - name: List downloaded files
+        run: ls -l
 
+      - name: Check the number of downloaded files
+        id: check_file_count
+        run: |
+          FILE_COUNT=$(ls -1 | wc -l)
+          echo "Number of files downloaded: $FILE_COUNT"
+          if [ "$FILE_COUNT" -ne 3 ]; then
+            echo "::error::Expected 3 files, but found $FILE_COUNT"
+            exit 1
+          fi
