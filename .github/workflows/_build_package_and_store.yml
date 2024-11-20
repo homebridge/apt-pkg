@@ -1,4 +1,5 @@
-name: "Build Package and Store in Latest Release"
+name: "z Build Package and Store in Latest Release"
+
 on: 
   workflow_call:
     inputs:
