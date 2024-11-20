@@ -1,4 +1,4 @@
-name: "On PR Merged"
+name: "Build and Release Triggered by a Push to package.json on latest branch and PR authored by Dependabot"
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
       # write permission is required for autolabeler
       # otherwise, read permission is required at least
       pull-requests: write
-    if: github.event.pull_request.merged == true
+    if: ${{ github.event.head_commit.message.author.username == 'NorthernMan54' }}
     runs-on: ubuntu-latest
     steps:
     - run: |
