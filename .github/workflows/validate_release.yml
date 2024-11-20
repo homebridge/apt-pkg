@@ -1,4 +1,4 @@
-name: "Validate apt pkg release post build and publish"
+name: "Validate apt pkg release post build and publish "
 
 on:
   workflow_dispatch:
