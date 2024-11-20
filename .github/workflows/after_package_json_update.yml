@@ -34,7 +34,8 @@ jobs:
       run: |
         echo "The tag name is: ${{ steps.drafter.outputs.tag_name }}"
         PROCESSED_VERSION=$(echo "${{ steps.drafter.outputs.tag_name }}" | sed 's/^v//') # Remove 'v'
-        echo "version=$PROCESSED_VERSION" >> $GITHUB_ENV
+        echo "version=$PROCESSED_VERSION" >> "$GITHUB_OUTPUT"
+        echo "$"$GITHUB_OUTPUT""
 
   
   build_package_and_store:
