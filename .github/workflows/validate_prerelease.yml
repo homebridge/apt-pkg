@@ -37,6 +37,7 @@ jobs:
           fi
 
   validate_prerelease_x86_package:
+    needs: count_prerelease_assets
     name: Download, Install, and Validate Homebridge Package
     runs-on: ubuntu-latest
     steps:
@@ -44,6 +45,8 @@ jobs:
         id: download_release
         uses: robinraju/release-downloader@v1.11
         with:
+          latest: true
+          preRelease: true
           fileName: 'homebridge_v1.3.10_amd64.deb'
       
       - name: List downloaded files
