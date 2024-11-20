@@ -5,8 +5,7 @@ jobs:
   tag:
     name: Release Tag
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.get_version.outputs.version }}
+
     steps:
       - name: Get Release Tag
         id: get_version
@@ -24,6 +23,8 @@ jobs:
         run: |
           echo Latest Tag does not matches Release tag
           exit 1
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
 
   release_type:
     name: Release Type
