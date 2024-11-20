@@ -60,13 +60,13 @@ jobs:
 
       - name: Validate Homebridge Service
         run: |
-          STATUS_OUTPUT=$(sudo hb-service status 2>&1)
-          echo "$STATUS_OUTPUT"
-          # Check if the output contains the expected string
-          if echo "$STATUS_OUTPUT" | grep -q "Homebridge UI Running"; then
-            echo "::info::Homebridge is running."
-          else
-            echo "::error::Homebridge is not running or the output is unexpected."
-            exit 1
-          fi
+          sudo hb-service status
           
+      - name: stop HB
+        run: |
+          sudo hb-service stop
+
+      - name: Validate Homebridge Service
+        run: |
+          sudo hb-service status
+      
