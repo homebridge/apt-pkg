@@ -35,15 +35,24 @@ jobs:
         echo "The tag name is: ${{ steps.drafter.outputs.tag_name }}"
         PROCESSED_VERSION=$(echo "${{ steps.drafter.outputs.tag_name }}" | sed 's/^v//') # Remove 'v'
         echo "version=$PROCESSED_VERSION" >> "$GITHUB_OUTPUT"
-        echo "$"$GITHUB_OUTPUT""
 
-  
   build_package_and_store:
     needs: if_merged
     uses: ./.github/workflows/_build_package_and_store.yml
     with:
       version: ${{ needs.if_merged.outputs.version }}
       release_id: ${{ needs.if_merged.outputs.release_id }}
+
+  prerelease:
+    needs: [build_package_and_store, if_merged]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set as a Pre-release
+        uses: irongut/EditRelease@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          id: ${{ needs.if_merged.outputs.release_id }}
+          prerelease: true
 
   print_context:
     runs-on: ubuntu-latest
