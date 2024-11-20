@@ -2,8 +2,22 @@ name: "Build Release and Publish to DEB Repo"
 run-name: Build Release ${{ github.ref }} from ${{ github.ref_name }}
 
 on:
-  release:
-     types: [released, prereleased]
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        description: 'The version of the release'
+        required: true
+        default: 'v0.0.0'
+      release_type:
+        type: string
+        description: 'The type of release'
+        required: false
+        default: 'stable'
+      release_id:
+        type: string
+        description: 'The release id'
+        required: true
 
 jobs:
   tag:
