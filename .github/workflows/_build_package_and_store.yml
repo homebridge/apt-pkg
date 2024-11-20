@@ -145,4 +145,4 @@ jobs:
       with:
         files: '*.deb;*.manifest'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        release-id: v${{ inputs.release_id }}
+        release-id: ${{ inputs.release_id }}
