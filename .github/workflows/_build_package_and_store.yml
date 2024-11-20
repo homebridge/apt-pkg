@@ -13,6 +13,10 @@ on:
         description: 'The type of release'
         required: false
         default: 'stable'
+      release_id:
+        type: string
+        description: 'The release id'
+        required: true
 
 jobs:
 
@@ -123,8 +127,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAG_NAME: v${{ inputs.version }}
+        RELEASE_ID: ${{ inputs.release_id }}
       with:
         is_append_body: "Contents of ${{ matrix.QEMU_ARCH }} Package." 
+
 
     - name: update release
       uses: tubone24/update_release@v1.3.1

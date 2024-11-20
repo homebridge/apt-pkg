@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.extract_version.outputs.processed_version }}
+      release_id: ${{ steps.drafter.outputs.id }}
     steps:
     - run: |
         echo The PR was merged
@@ -33,7 +34,7 @@ jobs:
       run: |
         echo "The tag name is: ${{ steps.drafter.outputs.tag_name }}"
         PROCESSED_VERSION=$(echo "${{ steps.drafter.outputs.tag_name }}" | sed 's/^v//') # Remove 'v'
-        echo "::set-output name=processed_version::$PROCESSED_VERSION"
+        echo "version=$PROCESSED_VERSION" >> $GITHUB_ENV
 
   
   build_package_and_store:
@@ -41,6 +42,7 @@ jobs:
     uses: ./.github/workflows/_build_package_and_store.yml
     with:
       version: ${{ needs.if_merged.outputs.version }}
+      release_id: ${{ needs.if_merged.outputs.release_id }}
 
   print_context:
     runs-on: ubuntu-latest
