@@ -29,8 +29,7 @@ jobs:
       with:
         ref: latest
       
-    - name: build_and_store_in_release
-      uses: ./.github/workflows/_build_package_and_store.yml
+    - uses: ./.github/workflows/_build_package_and_store.yml
 
   print_context:
     runs-on: ubuntu-latest
