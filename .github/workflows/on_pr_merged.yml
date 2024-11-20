@@ -27,7 +27,7 @@ jobs:
   
   build_package_and_store:
     needs: if_merged
-    uses: ./.github/workflows/_build_package_and_store.yml
+    uses: ./.github/actions/_build_package_and_store.yml
 
   print_context:
     runs-on: ubuntu-latest
