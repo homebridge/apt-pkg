@@ -18,7 +18,7 @@ jobs:
     if: ${{ github.event.head_commit.author.username == 'NorthernMan54' }}
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.drafter.outputs.tag_name }}
+      version: ${{ steps.extract_version.outputs.processed_version }}
     steps:
     - run: |
         echo The PR was merged
@@ -27,6 +27,14 @@ jobs:
       id: drafter
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Remove V from the version tag
+      id: extract_version
+      run: |
+        echo "The tag name is: ${{ steps.drafter.outputs.tag_name }}"
+        PROCESSED_VERSION=$(echo "${{ steps.drafter.outputs.tag_name }}" | sed 's/^v//') # Remove 'v'
+        echo "::set-output name=processed_version::$PROCESSED_VERSION"
+
   
   build_package_and_store:
     needs: if_merged

@@ -7,7 +7,7 @@ on:
         type: string
         description: 'The version of the release'
         required: true
-        default: '0.0.0'
+        default: 'v0.0.0'
       release_type:
         type: string
         description: 'The type of release'
@@ -97,7 +97,7 @@ jobs:
     - name: Linux - Build Docker Image
       if: runner.os == 'Linux'
       run: |
-        docker build -f build/Dockerfile --build-arg BASE_IMAGE=${{ matrix.BASE_IMAGE }} --build-arg QEMU_ARCH=${{ matrix.QEMU_ARCH }} -t package-build .
+        docker build -f build/Dockerfile --build-arg BASE_IMAGE=${{ matrix.BASE_IMAGE }} --build-arg QEMU_ARCH=${{ matrix.QEMU_ARCH }} -t package-build --platform=linux/${{ matrix.QEMU_ARCH }} .
 
     - name: Linux - Build Package
       if: runner.os == 'Linux'
