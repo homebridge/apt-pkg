@@ -23,7 +23,7 @@ jobs:
 
     - uses: release-drafter/release-drafter@v6
       env:
-        GITHUB_TOKEN: ${{ secrets.token }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: build
       uses: ./.github/build_package_and_store.yml
