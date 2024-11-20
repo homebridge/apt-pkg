@@ -16,6 +16,7 @@ jobs:
       - run: echo '::info::The triggering workflow passed'
 
   validate:
+    needs: on-success
     name: Validate Release
     runs-on: ubuntu-latest
     steps:
