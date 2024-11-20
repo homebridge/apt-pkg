@@ -137,11 +137,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAG_NAME: v${{ inputs.version }}
+        RELEASE_ID: ${{ inputs.release_id }}
       with:
         body_path: ${{ env.BODY_FILE }}
 
-    - uses: AButler/upload-release-assets@v2.0.2
+    - uses: AButler/upload-release-assets@v3.0
       with:
         files: '*.deb;*.manifest'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        release-tag: v${{ inputs.version }}
+        release-id: v${{ inputs.release_id }}
