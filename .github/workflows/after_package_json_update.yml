@@ -1,4 +1,4 @@
-name: "Build and Release Triggered by a Push to package.json on latest branch and PR authored by Dependabot"
+name: "After update of package.json by dependabot - create a release and build APT package"
 
 on:
   push:
