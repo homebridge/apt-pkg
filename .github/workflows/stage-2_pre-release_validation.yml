@@ -61,7 +61,7 @@ jobs:
         uses: robinraju/release-downloader@v1.11
         with:
           tag: ${{ needs.determine_release_tag.outputs.release_tag }}
-          fileName: 'homebridge_v1.3.10_amd64.deb'
+          fileName: 'homebridge_${{ needs.determine_release_tag.outputs.release_tag }}_amd64.deb'
       
       - name: List downloaded files
         run: |
@@ -70,7 +70,7 @@ jobs:
 
       - name: Install the downloaded package
         run: |
-          sudo dpkg -i homebridge_v1.3.10_amd64.deb || sudo apt-get install -f -y
+          sudo dpkg -i homebridge_${{ needs.determine_release_tag.outputs.release_tag }}_amd64.deb || sudo apt-get install -f -y
           sleep 30
 
       - name: Validate Homebridge Service
