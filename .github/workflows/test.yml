@@ -38,7 +38,7 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.release_version.outputs.current-version }}  # Without a V
+      version: ${{ steps.release_version.outputs.version }}  # Without a V
       release_id: ${{ steps.create_release.outputs.id }}
       release_upload_url: ${{ steps.create_release.outputs.upload_url }}
       release_type: 'stable'
@@ -64,8 +64,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ steps.release_version.outputs.current-v-version }}
-          release_name: Release ${{ steps.release_version.outputs.current-v-version  }}
+          tag_name: ${{ steps.release_version.outputs.v-version }}
+          release_name: Release ${{ steps.release_version.outputs.v-version  }}
           body: |
             Changes in this Release
             - First Change
