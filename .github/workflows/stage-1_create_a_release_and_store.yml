@@ -38,21 +38,32 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.extract_version.outputs.version }}
-      release_id: ${{ steps.drafter.outputs.id }}
+      version: ${{ steps.release_version.outputs.version }}  # Without a V
+      v-version: ${{ steps.release_version.outputs.v-version }}  # With a V
+      release_id: ${{ steps.create_release.outputs.id }}
+      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
       release_type: 'stable'
     steps:
-    - uses: release-drafter/release-drafter@v6
-      id: drafter
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Remove V from the version tag
-      id: extract_version
-      run: |
-        echo "The tag name is: ${{ steps.drafter.outputs.tag_name }}"
-        PROCESSED_VERSION=$(echo "${{ steps.drafter.outputs.tag_name }}" | sed 's/^v//') # Remove 'v'
-        echo "version=$PROCESSED_VERSION" >> "$GITHUB_OUTPUT"
+      - name: Get next version
+        uses: reecetech/version-increment@2023.10.1
+        id: release_version
+        with:
+          scheme: semver
+          increment: patch
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.release_version.outputs.v-version }}
+          release_name: Release ${{ steps.release_version.outputs.v-version  }}
+          draft: true
+          prerelease: true
 
   build_package_and_store:
     needs: [if_merged]
