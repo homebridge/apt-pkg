@@ -26,7 +26,7 @@ jobs:
           echo "Using USERNAME: $USERNAME"
           echo "username=$USERNAME" >> "$GITHUB_OUTPUT"
 
-  if_merged:
+  create_draft_prerelease:
     # Only run this job if the username is NorthernMan54
     needs: merge_inputs
     if: ${{ needs.merge_inputs.outputs.username == 'NorthernMan54' }}
@@ -66,8 +66,8 @@ jobs:
           prerelease: true
 
   build_package_and_store:
-    needs: [if_merged]
-    name: Build Packages for (${{ matrix.name }}) v${{ needs.if_merged.outputs.version }}
+    needs: [create_draft_prerelease]
+    name: Build Packages for (${{ matrix.name }}) v${{ needs.create_draft_prerelease.outputs.version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -111,7 +111,7 @@ jobs:
     - name: Linux - Build Package
       if: runner.os == 'Linux'
       run: |
-        docker run --rm -v $(pwd):/repo -e PKG_RELEASE_TYPE="${{ needs.if_merged.outputs.release_type }}" -e PKG_RELEASE_VERSION="${{ needs.if_merged.outputs.version }}" package-build
+        docker run --rm -v $(pwd):/repo -e PKG_RELEASE_TYPE="${{ needs.create_draft_prerelease.outputs.release_type }}" -e PKG_RELEASE_VERSION="${{ needs.create_draft_prerelease.outputs.version }}" package-build
 
     - name: Rename package to include v
       run: |
@@ -131,8 +131,8 @@ jobs:
       uses: tubone24/update_release@v1.3.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: v${{ needs.if_merged.outputs.version }}
-        RELEASE_ID: ${{ needs.if_merged.outputs.release_id }}
+        TAG_NAME: v${{ needs.create_draft_prerelease.outputs.version }}
+        RELEASE_ID: ${{ needs.create_draft_prerelease.outputs.release_id }}
       with:
         is_append_body: "Contents of ${{ matrix.QEMU_ARCH }} Package." 
 
@@ -141,8 +141,8 @@ jobs:
       uses: tubone24/update_release@v1.3.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: v${{ needs.if_merged.outputs.version }}
-        RELEASE_ID: ${{ needs.if_merged.outputs.release_id }}
+        TAG_NAME: v${{ needs.create_draft_prerelease.outputs.version }}
+        RELEASE_ID: ${{ needs.create_draft_prerelease.outputs.release_id }}
       with:
         body_path: ${{ env.BODY_FILE }}
 
@@ -150,18 +150,18 @@ jobs:
       with:
         files: '*.deb;*.manifest'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        release-id: ${{ needs.if_merged.outputs.release_id }}
+        release-id: ${{ needs.create_draft_prerelease.outputs.release_id }}
 
   publish_prerelease:
     # Publish the pre-release to the GitHub Releases page
-    needs: [build_package_and_store]
+    needs: [build_package_and_store, create_draft_prerelease]
     runs-on: ubuntu-latest
     steps:
       - uses: eregon/publish-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_id: ${{ needs.if_merged.outputs.release_id }}
+          release_id: ${{ needs.create_draft_prerelease.outputs.release_id }}
 
   print_context:
     runs-on: ubuntu-latest
