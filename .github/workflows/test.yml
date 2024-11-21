@@ -1,0 +1,79 @@
+name: "Test Stage 1 - Create a pre-release and build APT package"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - latest
+    paths:
+      - package.json
+
+jobs:
+  merge_inputs:
+    # allows for both the workflow_dispatch and push events to trigger this job
+    runs-on: ubuntu-latest
+    outputs: 
+      username: ${{ steps.merge_inputs.outputs.username }}
+    steps:
+      - name: Merge Inputs
+        id: merge_inputs
+        run: |
+          if [ "${{ github.event.head_commit.author.username }}" ]; then
+            USERNAME=${{ github.event.head_commit.author.username }}
+          else
+            USERNAME='NorthernMan54'
+          fi
+          echo "Using USERNAME: $USERNAME"
+          echo "username=$USERNAME" >> "$GITHUB_OUTPUT"
+
+  if_merged:
+    # Only run this job if the username is NorthernMan54
+    needs: merge_inputs
+    if: ${{ needs.merge_inputs.outputs.username == 'NorthernMan54' }}
+    permissions:
+      # write permission is required to create a github release
+      contents: write
+      # write permission is required for autolabeler
+      # otherwise, read permission is required at least
+      pull-requests: write
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release_version.outputs.current-version }}  # Without a V
+      release_id: ${{ steps.create_release.outputs.id }}
+      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_type: 'stable'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get next version
+        uses: reecetech/version-increment@2023.10.1
+        id: release_version
+        with:
+          scheme: semver
+          increment: patch
+
+      - name: Dump Version context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.release_version.outputs.current-v-version }}
+          release_name: Release ${{ steps.release_version.outputs.current-v-version  }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
+
+      - name: Dump Create Release context
+        env:
+          RELEASE_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$RELEASE_CONTEXT"

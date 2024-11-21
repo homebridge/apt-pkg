@@ -141,7 +141,7 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         release-id: ${{ needs.if_merged.outputs.release_id }}
 
-  prerelease:
+  publish_prerelease:
     # Publish the pre-release to the GitHub Releases page
     needs: [build_package_and_store]
     runs-on: ubuntu-latest
