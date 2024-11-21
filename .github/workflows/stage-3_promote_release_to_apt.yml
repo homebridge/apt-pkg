@@ -1,4 +1,4 @@
-name: "Promote Release package to APT Stores"
+name: "Stage 3 - Promote Release package to APT Stores"
 
 on:
   release:
