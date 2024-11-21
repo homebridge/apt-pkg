@@ -3,11 +3,10 @@ name: "Pre-Release Validation Workflow"
 on:
   workflow_dispatch:
   release:
-    types: [published]
 
 jobs:
   count_prerelease_assets:
-    if: github.event.release.prerelease == true
+    if: ${{ github.event.release.prerelease == true }} && ${{ github.event.release.draft == false }}
     name: Download Latest Pre-Release Assets
     runs-on: ubuntu-latest
     steps:

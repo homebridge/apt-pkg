@@ -46,7 +46,7 @@ jobs:
 
   tag:
     name: Release Tag
-    if: github.event_name == 'release'
+    if: ${{ github.event.release.prerelease == false }} && ${{ github.event.release.draft == false }} && ${{ github.event.action == 'released' }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get_version.outputs.version }}
