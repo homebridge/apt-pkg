@@ -44,7 +44,7 @@ jobs:
           if [ "${{ inputs.increment }}" ]; then
             INCREMENT=${{ inputs.increment }}
           else
-            INCREMENT='patch
+            INCREMENT=patch
           fi
           echo "Using INCREMENT: $INCREMENT"
           echo "increment=$INCREMENT" >> "$GITHUB_OUTPUT"
