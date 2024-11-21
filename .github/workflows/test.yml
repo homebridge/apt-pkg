@@ -2,11 +2,11 @@ name: "Test Stage 1 - Create a pre-release and build APT package"
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - latest
-    paths:
-      - package.json
+#  push:
+#    branches:
+#      - latest
+#    paths:
+#      - package.json
 
 jobs:
   merge_inputs:
