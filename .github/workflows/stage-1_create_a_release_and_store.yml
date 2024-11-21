@@ -62,8 +62,8 @@ jobs:
     outputs:
       version: ${{ steps.release_version.outputs.version }}  # Without a V
       v-version: ${{ steps.release_version.outputs.v-version }}  # With a V
-    #  release_id: ${{ steps.create_release.outputs.id }}
-    #  release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
       release_type: 'stable'
     steps:
       - name: Checkout code
