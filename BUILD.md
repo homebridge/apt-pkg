@@ -10,7 +10,7 @@ The package.json dependencies are used to manage the versions used within the re
 
 Then once a change is made to package.json in the latest branch, originated by Depandabot, the stage 1 workflow will kick off.
 
-Release TAG is created by `reecetech/version-increment`, and is configured to increment the patch level every time, and not based on the package.json.  To release a minor or major release, the manual workflow dispatch must be used.
+Release TAG is created by `reecetech/version-increment`, and is configured to increment the patch level every time, and not based on the package.json.  To release a minor or major release, the manual workflow dispatch must be used, and package.json/package-lock.json manually updated.
 
 ## Actions
 
