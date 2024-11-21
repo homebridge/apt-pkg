@@ -28,6 +28,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y homebridge
 
+      - name: Display APT Pkg Version
+        run: dpkg -l homebridge
+
       - name: Validate Homebridge
         run: |
           sudo hb-service status
