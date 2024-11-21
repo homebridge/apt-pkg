@@ -2,6 +2,17 @@ name: "Test Stage 1 - Create a pre-release and build APT package"
 
 on:
   workflow_dispatch:
+    inputs:
+      increment:
+        description: 'Release Level'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
 #  push:
 #    branches:
 #      - latest
@@ -13,10 +24,11 @@ jobs:
     # allows for both the workflow_dispatch and push events to trigger this job
     runs-on: ubuntu-latest
     outputs: 
-      username: ${{ steps.merge_inputs.outputs.username }}
+      username: ${{ steps.merge_username.outputs.username }}
+      increment: ${{ steps.merge_increment.outputs.increment }}
     steps:
-      - name: Merge Inputs
-        id: merge_inputs
+      - name: Merge Username
+        id: merge_username
         run: |
           if [ "${{ github.event.head_commit.author.username }}" ]; then
             USERNAME=${{ github.event.head_commit.author.username }}
@@ -26,7 +38,18 @@ jobs:
           echo "Using USERNAME: $USERNAME"
           echo "username=$USERNAME" >> "$GITHUB_OUTPUT"
 
-  if_merged:
+      - name: Merge Username
+        id: merge_increment
+        run: |
+          if [ "${{ inputs.increment }}" ]; then
+            INCREMENT=${{ inputs.increment }}
+          else
+            INCREMENT='patch
+          fi
+          echo "Using INCREMENT: $INCREMENT"
+          echo "increment=$INCREMENT" >> "$GITHUB_OUTPUT"
+
+  create_draft_prerelease:
     # Only run this job if the username is NorthernMan54
     needs: merge_inputs
     if: ${{ needs.merge_inputs.outputs.username == 'NorthernMan54' }}
@@ -39,8 +62,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.release_version.outputs.version }}  # Without a V
-      release_id: ${{ steps.create_release.outputs.id }}
-      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+      v-version: ${{ steps.release_version.outputs.v-version }}  # With a V
+    #  release_id: ${{ steps.create_release.outputs.id }}
+    #  release_upload_url: ${{ steps.create_release.outputs.upload_url }}
       release_type: 'stable'
     steps:
       - name: Checkout code
@@ -51,25 +75,9 @@ jobs:
         id: release_version
         with:
           scheme: semver
-          increment: patch
+          increment: ${{ needs.merge_inputs.outputs.increment }}
 
-      - name: Dump Version context
+      - name: Dump Inputs context
         env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ steps.release_version.outputs.v-version }}
-          release_name: Release ${{ steps.release_version.outputs.v-version  }}
-          draft: true
-          prerelease: true
-
-      - name: Dump Create Release context
-        env:
-          RELEASE_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$RELEASE_CONTEXT"
+          INPUTS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$INPUTS_CONTEXT"
