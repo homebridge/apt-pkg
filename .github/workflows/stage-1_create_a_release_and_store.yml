@@ -155,6 +155,10 @@ jobs:
   print_context:
     runs-on: ubuntu-latest
     steps:
+      - name: Dump Inputs context
+        env:
+          INPUTS_CONTEXT: ${{ toJson(inputs) }}
+        run: echo "$INPUTS_CONTEXT"
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}

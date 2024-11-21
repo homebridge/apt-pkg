@@ -1,4 +1,4 @@
-name: "Purge Cloudflare Cache"
+name: "Stage 3.5 - Purge Cloudflare Cache"
 
 on:
   workflow_dispatch:

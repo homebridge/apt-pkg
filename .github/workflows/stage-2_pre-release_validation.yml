@@ -79,7 +79,6 @@ jobs:
           sudo hb-service status
 
   print_context:
-    needs: determine_release_tag
     runs-on: ubuntu-latest
     steps:
       - name: Dump Inputs context
