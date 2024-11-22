@@ -147,6 +147,7 @@ jobs:
     needs: [build_package_and_store, create_draft_prerelease]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           pattern: artifacts-*
@@ -163,7 +164,8 @@ jobs:
       - name: Create Release Body
         id: release_body
         run: |
-          echo "body=$(cat '$(ls *.manifest | head -n 1)')" >> $GITHUB_OUTPUT
+          file=$(ls *.manifest | head -n 1)
+          echo "body=$(cat $file)" >> $GITHUB_OUTPUT
 
       - name: Create Pre-Release
         uses: mini-bomba/create-github-release@v1.2.0
