@@ -147,24 +147,24 @@ jobs:
       run: |
         echo BODY_FILE="$(ls *.manifest)" >> $GITHUB_ENV
 
-    - name: update release
-      uses: tubone24/update_release@v1.3.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: v${{ needs.create_draft_prerelease.outputs.version }}
-        RELEASE_ID: ${{ needs.create_draft_prerelease.outputs.release_id }}
-      with:
-        is_append_body: "Contents of ${{ matrix.QEMU_ARCH }} Package." 
+#    - name: update release
+#      uses: tubone24/update_release@v1.3.1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        TAG_NAME: v${{ needs.create_draft_prerelease.outputs.version }}
+#        RELEASE_ID: ${{ needs.create_draft_prerelease.outputs.release_id }}
+#      with:
+#        is_append_body: "Contents of ${{ matrix.QEMU_ARCH }} Package." 
 
 
-    - name: update release
-      uses: tubone24/update_release@v1.3.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: v${{ needs.create_draft_prerelease.outputs.version }}
-        RELEASE_ID: ${{ needs.create_draft_prerelease.outputs.release_id }}
-      with:
-        body_path: ${{ env.BODY_FILE }}
+#    - name: update release
+#      uses: tubone24/update_release@v1.3.1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        TAG_NAME: v${{ needs.create_draft_prerelease.outputs.version }}
+#        RELEASE_ID: ${{ needs.create_draft_prerelease.outputs.release_id }}
+#      with:
+#        body_path: ${{ env.BODY_FILE }}
 
 #    - uses: AButler/upload-release-assets@v3.0
 #      with:
