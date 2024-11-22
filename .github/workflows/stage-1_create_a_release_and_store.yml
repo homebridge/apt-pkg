@@ -62,8 +62,6 @@ jobs:
     outputs:
       version: ${{ steps.release_version.outputs.version }}  # Without a V
       v-version: ${{ steps.release_version.outputs.v-version }}  # With a V
-      release_id: ${{ steps.create_release.outputs.id }}
-      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
       release_type: 'stable'
     steps:
       - name: Checkout code
@@ -75,17 +73,6 @@ jobs:
         with:
           scheme: semver
           increment: ${{ needs.merge_inputs.outputs.increment }}
-          
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ steps.release_version.outputs.v-version }}
-          release_name: Release ${{ steps.release_version.outputs.v-version  }}
-          draft: true
-          prerelease: true
 
   build_package_and_store:
     needs: [create_draft_prerelease]
@@ -145,45 +132,55 @@ jobs:
         UPDATED=$(ls homebridge*.manifest | sed -e 's/homebridge_/homebridge_v/g')
         mv homebridge_*.manifest ${UPDATED}
 
-    - name: Set variables
-      run: |
-        echo BODY_FILE="$(ls *.manifest)" >> $GITHUB_ENV
-
-    - name: update release
-      uses: tubone24/update_release@v1.3.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: v${{ needs.create_draft_prerelease.outputs.version }}
-        RELEASE_ID: ${{ needs.create_draft_prerelease.outputs.release_id }}
+    - uses: actions/upload-artifact@v4
       with:
-        is_append_body: "Contents of ${{ matrix.QEMU_ARCH }} Package." 
-
-
-    - name: update release
-      uses: tubone24/update_release@v1.3.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: v${{ needs.create_draft_prerelease.outputs.version }}
-        RELEASE_ID: ${{ needs.create_draft_prerelease.outputs.release_id }}
-      with:
-        body_path: ${{ env.BODY_FILE }}
-
-    - uses: AButler/upload-release-assets@v3.0
-      with:
-        files: '*.deb;*.manifest'
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        release-id: ${{ needs.create_draft_prerelease.outputs.release_id }}
+        name: artifacts-${{ matrix.name }}
+        retention-days: 7
+        path: |
+          *.deb
+          *.manifest
 
   publish_prerelease:
     # Publish the pre-release to the GitHub Releases page
     needs: [build_package_and_store, create_draft_prerelease]
     runs-on: ubuntu-latest
     steps:
-      - uses: eregon/publish-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
         with:
-          release_id: ${{ needs.create_draft_prerelease.outputs.release_id }}
+          pattern: artifacts-*
+          merge-multiple: true
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Get the date
+        id: date
+        run: |
+          echo "builddate=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Create Release Body
+        id: release_body
+        run: |
+          file=$(ls *.manifest | head -n 1)
+          echo "body=$(cat $file)" >> $GITHUB_OUTPUT
+
+      - name: Create Pre-Release
+        uses: mini-bomba/create-github-release@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.create_draft_prerelease.outputs.v-version }}
+          prerelease: true
+          draft: false
+          name: "${{ needs.create_draft_prerelease.outputs.v-version }} - ${{ steps.date.outputs.builddate }}"
+          body: |
+            ${{ steps.release_body.outputs.body }}
+          files: |
+            *.deb
+            *.manifest
+          clear_attachments: true
+          fail_on_no_files: true
 
   print_context:
     runs-on: ubuntu-latest
