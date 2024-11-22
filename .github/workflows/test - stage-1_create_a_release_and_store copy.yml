@@ -164,16 +164,19 @@ jobs:
 #        release-tag: v${{ needs.create_draft_prerelease.outputs.version }}
 
     - name: Release the new binaries
-      uses: mini-bomba/create-github-release@v1.1.3
+      uses: mini-bomba/create-github-release@v1.2.0
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: v${{ needs.create_draft_prerelease.outputs.version }}
         prerelease: true
         draft: true
+        skip_tag_creation: true
+        clear_attachments: false
         body: |
           ${{ env.BODY_FILE }}
         files: |
           '*.deb;*.manifest'
+
 
   publish_prerelease:
     # Publish the pre-release to the GitHub Releases page
