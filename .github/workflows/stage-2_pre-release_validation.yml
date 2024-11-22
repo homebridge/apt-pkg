@@ -8,7 +8,17 @@ on:
         required: true
         type: string
   release:
-    types: [published, prereleased]
+    types: [prereleased]
+  # The workflow run trigger is a workaround due to mini-bomba/create-github-release@v1.2.0 in Stage 1 - not triggering the release event
+  workflow_run:
+      workflows: ["Stage 1 - Create a pre-release and build APT package", 
+        "Test - Stage 1 - Create a pre-release and build APT package"]
+      types:
+        - completed
+  
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   determine_release_tag:
@@ -22,8 +32,13 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
             echo "release_tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
-          else
+          else if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "release_tag=${{ inputs.release_tag }}" >> "$GITHUB_OUTPUT"
+          else if [ "${{ github.event_name }}" == "workflow_run" && ${{ github.event.workflow_run.conclusion == 'success' }}]; then
+            echo "release_tag=${{ github.event.workflow_run.conclusion }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Unexpected event: ${{ github.event_name }}"
+            exit 1
           fi
 
   count_prerelease_assets:
