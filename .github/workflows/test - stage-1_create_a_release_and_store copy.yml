@@ -145,17 +145,7 @@ jobs:
 
     - name: Set variables
       run: |
-        echo BODY_FILE="$(ls *.manifest)" >> $GITHUB_ENV
-
-#    - name: update release
-#      uses: tubone24/update_release@v1.3.1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        TAG_NAME: v${{ needs.create_draft_prerelease.outputs.version }}
-#        RELEASE_ID: ${{ needs.create_draft_prerelease.outputs.release_id }}
-#      with:
-#        is_append_body: "Contents of ${{ matrix.QEMU_ARCH }} Package." 
-
+        echo BODY_FILE="$(cat *.manifest)" >> $GITHUB_ENV
 
 #    - name: update release
 #      uses: tubone24/update_release@v1.3.1
@@ -166,12 +156,24 @@ jobs:
 #      with:
 #        body_path: ${{ env.BODY_FILE }}
 
-    - uses: AButler/upload-release-assets@v3.0
+#    - uses: AButler/upload-release-assets@v3.0
+#      with:
+#        files: '*.deb;*.manifest'
+#        repo-token: ${{ secrets.GITHUB_TOKEN }}
+#        release-id: ${{ needs.create_draft_prerelease.outputs.release_id }}
+#        release-tag: v${{ needs.create_draft_prerelease.outputs.version }}
+
+    - name: Release the new binaries
+      uses: mini-bomba/create-github-release@v1.1.3
       with:
-        files: '*.deb;*.manifest'
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        release-id: ${{ needs.create_draft_prerelease.outputs.release_id }}
-        release-tag: v${{ needs.create_draft_prerelease.outputs.version }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: v${{ needs.create_draft_prerelease.outputs.version }}
+        prerelease: true
+        draft: true
+        body: |
+          ${{ env.BODY_FILE }}
+        files: |
+          '*.deb;*.manifest'
 
   publish_prerelease:
     # Publish the pre-release to the GitHub Releases page
