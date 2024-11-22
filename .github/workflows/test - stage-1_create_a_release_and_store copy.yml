@@ -166,12 +166,12 @@ jobs:
 #      with:
 #        body_path: ${{ env.BODY_FILE }}
 
-#    - uses: AButler/upload-release-assets@v3.0
-#      with:
-#        files: '*.deb;*.manifest'
-#        repo-token: ${{ secrets.GITHUB_TOKEN }}
-#        release-id: ${{ needs.create_draft_prerelease.outputs.release_id }}
-#        release-tag: v${{ needs.create_draft_prerelease.outputs.version }}
+    - uses: AButler/upload-release-assets@v3.0
+      with:
+        files: '*.deb;*.manifest'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        release-id: ${{ needs.create_draft_prerelease.outputs.release_id }}
+        release-tag: v${{ needs.create_draft_prerelease.outputs.version }}
 
   publish_prerelease:
     # Publish the pre-release to the GitHub Releases page
