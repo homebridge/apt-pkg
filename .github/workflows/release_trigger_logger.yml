@@ -15,7 +15,8 @@ jobs:
 
     - name: Variables
       run: |
-        echo "::notice event_name: ${{ github.event_name }}"
+        echo "::notice:: event_name: ${{ github.event_name }}"
+        echo "::notice:: event_action: ${{ github.event.action }}"
 
 
     
