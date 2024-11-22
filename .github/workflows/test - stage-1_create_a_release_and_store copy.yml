@@ -1,4 +1,4 @@
-name: "Stage 1 - Create a pre-release and build APT package"
+name: "Test - Stage 1 - Create a pre-release and build APT package"
 
 on:
   workflow_dispatch:
