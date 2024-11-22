@@ -168,7 +168,7 @@ jobs:
           echo "body=$(cat $file)" >> $GITHUB_OUTPUT
 
       - name: Create Pre-Release
-        uses: mini-bomba/create-github-release@v1.2.0
+        uses: docker://ghcr.io/mini-bomba/create-github-release:v1.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.create_draft_prerelease.outputs.v-version }}

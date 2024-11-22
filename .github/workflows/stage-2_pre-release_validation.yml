@@ -32,9 +32,9 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
             echo "release_tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
-          else if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "release_tag=${{ inputs.release_tag }}" >> "$GITHUB_OUTPUT"
-          else if [ "${{ github.event_name }}" == "workflow_run" && ${{ github.event.workflow_run.conclusion == 'success' }}]; then
+          elif [ "${{ github.event_name }}" == "workflow_run" && ${{ github.event.workflow_run.conclusion == 'success' }}]; then
             echo "release_tag=${{ github.event.workflow_run.conclusion }}" >> "$GITHUB_OUTPUT"
           else
             echo "::error::Unexpected event: ${{ github.event_name }}"
