@@ -137,6 +137,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: artifacts-${{ matrix.name }}
+        retention-days: 7
         path: |
           *.deb
           *.manifest
@@ -175,9 +176,10 @@ jobs:
           body: |
             ${{ steps.release_body.outputs.body }}
           files: |
-            artifacts-*/*.deb
-            artifacts-*/*.manifest
+            *.deb
+            *.manifest
           clear_attachments: true
+          fail_on_no_files: true
 
   print_context:
     runs-on: ubuntu-latest
