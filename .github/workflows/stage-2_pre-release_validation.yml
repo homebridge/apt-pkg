@@ -26,16 +26,24 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_tag: ${{ steps.set_release_tag.outputs.release_tag }}
+      preRelease: ${{ steps.set_release_tag.outputs.preRelease }}
+      latest: ${{ steps.set_release_tag.outputs.latest }}
     steps:
       - name: Set Release Tag
         id: set_release_tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
             echo "release_tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+            echo "preRelease=false" >> "$GITHUB_OUTPUT"
+            echo "latest=false" >> "$GITHUB_OUTPUT"
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "release_tag=${{ inputs.release_tag }}" >> "$GITHUB_OUTPUT"
+            echo "preRelease=false" >> "$GITHUB_OUTPUT"
+            echo "latest=false" >> "$GITHUB_OUTPUT"
           elif [ "${{ github.event_name }}" == "workflow_run" && ${{ github.event.workflow_run.conclusion == 'success' }}]; then
-            echo "release_tag=${{ github.event.workflow_run.conclusion }}" >> "$GITHUB_OUTPUT"
+            echo "release_tag=''" >> "$GITHUB_OUTPUT"
+            echo "preRelease=true" >> "$GITHUB_OUTPUT"
+            echo "latest=true" >> "$GITHUB_OUTPUT"
           else
             echo "::error::Unexpected event: ${{ github.event_name }}"
             exit 1
@@ -51,6 +59,8 @@ jobs:
         uses: robinraju/release-downloader@v1.11
         with:
           tag: ${{ needs.determine_release_tag.outputs.release_tag }}
+          preRelease: ${{ needs.determine_release_tag.outputs.preRelease }}
+          latest: ${{ needs.determine_release_tag.outputs.latest }}
           fileName: 'homebridge*.deb'
       
       - name: List the downloaded files
@@ -76,6 +86,8 @@ jobs:
         uses: robinraju/release-downloader@v1.11
         with:
           tag: ${{ needs.determine_release_tag.outputs.release_tag }}
+          preRelease: ${{ needs.determine_release_tag.outputs.preRelease }}
+          latest: ${{ needs.determine_release_tag.outputs.latest }}
           fileName: 'homebridge_${{ needs.determine_release_tag.outputs.release_tag }}_amd64.deb'
       
       - name: List downloaded files
