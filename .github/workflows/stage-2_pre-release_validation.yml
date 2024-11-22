@@ -40,7 +40,7 @@ jobs:
             echo "release_tag=${{ inputs.release_tag }}" >> "$GITHUB_OUTPUT"
             echo "preRelease=false" >> "$GITHUB_OUTPUT"
             echo "latest=false" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event_name }}" == "workflow_run" && ${{ github.event.workflow_run.conclusion == 'success' }}]; then
+          elif [ "${{ github.event_name }}" == "workflow_run"] && [ "${{ github.event.workflow_run.conclusion}}" == 'success' ]; then
             echo "release_tag=''" >> "$GITHUB_OUTPUT"
             echo "preRelease=true" >> "$GITHUB_OUTPUT"
             echo "latest=true" >> "$GITHUB_OUTPUT"
