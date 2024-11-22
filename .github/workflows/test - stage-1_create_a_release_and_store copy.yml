@@ -173,16 +173,16 @@ jobs:
         release-id: ${{ needs.create_draft_prerelease.outputs.release_id }}
         release-tag: v${{ needs.create_draft_prerelease.outputs.version }}
 
-  publish_prerelease:
-    # Publish the pre-release to the GitHub Releases page
-    needs: [build_package_and_store, create_draft_prerelease]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: eregon/publish-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.create_draft_prerelease.outputs.release_id }}
+#  publish_prerelease:
+#    # Publish the pre-release to the GitHub Releases page
+#    needs: [build_package_and_store, create_draft_prerelease]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: eregon/publish-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          release_id: ${{ needs.create_draft_prerelease.outputs.release_id }}
 
   print_context:
     runs-on: ubuntu-latest
