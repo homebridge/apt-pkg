@@ -136,7 +136,7 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        name: Workflow Artifacts from ${{ matrix.name }}
+        name: artifacts-${{ matrix.name }}
         path: |
           *.deb
           *.manifest
@@ -147,6 +147,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
+        with:
+          pattern: artifacts-*
+          merge-multiple: true
 
       - name: Display structure of downloaded files
         run: ls -R
@@ -159,7 +162,7 @@ jobs:
       - name: Create Release Body
         id: release_body
         run: |
-          echo "body=$(cat '$(ls *.txt | head -n 1)')" >> $GITHUB_OUTPUT
+          echo "body=$(cat '$(ls artifacts-*.manifest | head -n 1)')" >> $GITHUB_OUTPUT
 
       - name: Create Pre-Release
         uses: mini-bomba/create-github-release@v1.2.0
@@ -172,8 +175,8 @@ jobs:
           body: |
             ${{ steps.release_body.outputs.body }}
           files: |
-            *.deb
-            *.manifest
+            artifacts-*/*.deb
+            artifacts-*/*.manifest
           clear_attachments: true
 
   print_context:
