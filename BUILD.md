@@ -4,7 +4,7 @@
 
 1. Approve and merge Dependabot Pull Request ( triggers Stage 1 then 2 )
 2. Wait about an hour for builds and validation to occur.
-3. Change Release from a Prerelease to Release and set status as Latest ( triggers Stage 3 then 4 )
+3. Change Prerelease to Release and set status as Latest ( triggers Stage 3 then 4 )
 
 The package.json dependencies are used to manage the versions used within the release package.  And Dependabot watches the versions, and creates a pull request if a version needs updating.  Nothing else in package.json is used.  If you manually update the dependencies, package-lock.json also needs updating.
 
