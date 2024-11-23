@@ -161,6 +161,7 @@ jobs:
           echo "builddate=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - name: Create Release Body
+        id: release_body
         run: |
           echo BODY_FILE="$(ls *.manifest | head -n 1)" >> $GITHUB_ENV
 
@@ -175,6 +176,7 @@ jobs:
           files: |
             *.deb
             *.manifest
+          body: ${{ steps.release_body.outputs.BODY_FILE }}
           clear_attachments: true
           fail_on_no_files: true
 
@@ -184,7 +186,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ needs.create_draft_prerelease.outputs.v-version }}
         with:
-          body_path: ${{ env.BODY_FILE }}
+          body_path: ${{ steps.release_body.outputs.BODY_FILE }}
 
   print_context:
     runs-on: ubuntu-latest
