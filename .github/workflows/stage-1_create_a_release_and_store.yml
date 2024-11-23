@@ -161,11 +161,8 @@ jobs:
           echo "builddate=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - name: Create Release Body
-        id: release_body
         run: |
-          file=$(ls *.manifest | head -n 1)
-          body=$(cat $file)
-          echo "{$body}" >> $GITHUB_OUTPUT
+          echo BODY_FILE="$(ls *.manifest)" >> $GITHUB_ENV
 
       - name: Create Pre-Release
         uses: docker://ghcr.io/mini-bomba/create-github-release:v1.2.0
@@ -175,13 +172,19 @@ jobs:
           prerelease: true
           draft: false
           name: "${{ needs.create_draft_prerelease.outputs.v-version }} - ${{ steps.date.outputs.builddate }}"
-          body: |
-            ${{ steps.release_body.outputs.body }}
           files: |
             *.deb
             *.manifest
           clear_attachments: true
           fail_on_no_files: true
+
+      - name: update release
+        uses: tubone24/update_release@v1.3.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ needs.create_draft_prerelease.outputs.v-version }}
+        with:
+          body_path: ${{ env.BODY_FILE }}
 
   print_context:
     runs-on: ubuntu-latest
