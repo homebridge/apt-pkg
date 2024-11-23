@@ -163,7 +163,7 @@ jobs:
       - name: Create Release Body
         id: release_body
         run: |
-          echo "BODY_FILE='$(ls *.manifest | head -n 1)'" >> $GITHUB_OUTPUT
+          echo "BODY_FILE=$(ls *.manifest | head -n 1)" >> $GITHUB_OUTPUT
 
       - name: Dump Steps context
         env:
