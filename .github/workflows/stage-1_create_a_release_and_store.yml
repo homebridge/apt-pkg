@@ -176,7 +176,7 @@ jobs:
           files: |
             *.deb
             *.manifest
-          description: ${{ steps.release_body.outputs.BODY_FILE }}
+          body: ${{ steps.release_body.outputs.BODY_FILE }}
           clear_attachments: true
           fail_on_no_files: true
 
