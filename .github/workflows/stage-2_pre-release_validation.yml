@@ -88,7 +88,7 @@ jobs:
           tag: ${{ needs.determine_release_tag.outputs.release_tag }}
           preRelease: ${{ needs.determine_release_tag.outputs.preRelease }}
           latest: ${{ needs.determine_release_tag.outputs.latest }}
-          fileName: 'homebridge_${{ needs.determine_release_tag.outputs.release_tag }}_amd64.deb'
+          fileName: 'homebridge_*_amd64.deb'
       
       - name: List downloaded files
         run: |
@@ -97,7 +97,7 @@ jobs:
 
       - name: Install the downloaded package
         run: |
-          sudo dpkg -i homebridge_${{ needs.determine_release_tag.outputs.release_tag }}_amd64.deb || sudo apt-get install -f -y
+          sudo dpkg -i homebridge_*_amd64.deb || sudo apt-get install -f -y
           sleep 30
 
       - name: Validate Homebridge Service
