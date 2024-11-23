@@ -163,7 +163,12 @@ jobs:
       - name: Create Release Body
         id: release_body
         run: |
-          echo BODY_FILE="$(ls *.manifest | head -n 1)" >> $GITHUB_ENV
+          echo "BODY_FILE='$(ls *.manifest | head -n 1)'" >> $GITHUB_OUTPUT
+
+      - name: Dump Steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
 
       - name: Create Pre-Release
         uses: docker://ghcr.io/mini-bomba/create-github-release:v1.2.0
