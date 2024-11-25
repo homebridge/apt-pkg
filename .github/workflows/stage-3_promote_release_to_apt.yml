@@ -90,7 +90,7 @@ jobs:
       CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
 
   notify_discord:
-    name: Notify Discord
+    name: Notify Discord - \#hb-linux
     needs: [update_apt_repo, purge_cloudflare_cache]
     uses: homebridge/.github/.github/workflows/discord-webhooks.yml@latest
     with:
