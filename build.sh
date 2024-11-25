@@ -19,7 +19,8 @@ cp -R deb staging
 # deb/debian/control `libc6 (>= 2.31)` may need updating as well
 
 NODE_LTS_TAG="Iron"
-NODE_VERSION="$(curl -s https://nodejs.org/dist/index.json | jq -r --arg NODE_LTS_TAG "${NODE_LTS_TAG}" 'map(select(.lts==$NODE_LTS_TAG))[0].version')"
+# NODE_VERSION="$(curl -s https://nodejs.org/dist/index.json | jq -r --arg NODE_LTS_TAG "${NODE_LTS_TAG}" 'map(select(.lts==$NODE_LTS_TAG))[0].version')"
+NODE_VERSION=$(cat package.json | jq -r '.dependencies.node | gsub("^\\^"; "v")')
 
 BUILD_ARCH=${QEMU_ARCH:-x86_64}
 
@@ -55,12 +56,12 @@ export npm_config_update_notifier=false
 export npm_config_auto_install_peers=true
 export npm_config_loglevel=error
 
-npm install --location=global homebridge-config-ui-x@latest
+npm install --location=global homebridge-config-ui-x
 
 HOMBRIDGE_CONFIG_VERSION="$(npm list -g --json=true | jq --raw-output '{version: .dependencies."homebridge-config-ui-x".version}.version')"
 echo "|Homebridge-Config-UI-X|" $HOMBRIDGE_CONFIG_VERSION "|" >> homebridge_apt_pkg_$NODE_ARCH.manifest
 
-npm install --prefix $(pwd)/staging/var/lib/homebridge homebridge@latest
+npm install --prefix $(pwd)/staging/var/lib/homebridge homebridge
 
 CWD=`pwd`
 cd staging/var/lib/homebridge

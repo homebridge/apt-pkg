@@ -1,4 +1,4 @@
-name: "Purge Cloudflare Cache"
+name: "Stage 3.5 - Purge Cloudflare Cache"
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Purge Cloudflare Cache
       env:

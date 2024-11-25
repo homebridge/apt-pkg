@@ -10,3 +10,4 @@ Release
 staging/
 .DS_Store
 /node_modules
+*.manifest
