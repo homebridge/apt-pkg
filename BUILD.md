@@ -6,11 +6,11 @@
 2. Wait about an hour for builds and validation to occur.
 3. Change Prerelease to Release and set status as Latest ( triggers Stage 3 then 4 )
 
-The package.json dependencies are used to manage the versions used within the release package.  And Dependabot watches the versions, and creates a pull request if a version needs updating.  Nothing else in package.json is used.  If you manually update the dependencies, package-lock.json also needs updating.
+The package.json and package-lock.json dependencies are used to manage the versions used within the release package.  And Dependabot watches the versions, and creates a pull request if a version needs updating.  Nothing else in package.json is used.  If you manually update the versions, package-lock.json also needs updating, and you need to manually kick off stage 1.
 
-Then once a change is made to package.json in the latest branch, originated by Depandabot, the stage 1 workflow will kick off.
+### Versioning
 
-Release TAG is created by `reecetech/version-increment`, and is configured to increment the patch level every time, and not based on the package.json.  To release a minor or major release, the manual workflow dispatch must be used, and package.json/package-lock.json manually updated.
+The Release TAG is created by `reecetech/version-increment`, and is configured to increment the patch level every time, and not based on the package.json.  To release a minor or major release, the manual workflow dispatch must be used, and package.json/package-lock.json manually updated.
 
 ## Actions
 
