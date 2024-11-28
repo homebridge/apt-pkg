@@ -28,6 +28,8 @@ RUN systemctl mask \
   getty.target \
   graphical.target
 
+RUN ls -R test
+
 COPY test/balena/entry.sh /usr/bin/entry.sh
 COPY test/balena/balena.service /etc/systemd/system/balena.service
 
