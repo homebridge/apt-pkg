@@ -72,6 +72,7 @@ jobs:
           sudo apt-get install -y homebridge
           dpkg -l homebridge
           sleep 30
+          sudo hb-service view
           sudo hb-service status
           sudo hb-service view
           
