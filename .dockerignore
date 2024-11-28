@@ -6,3 +6,4 @@
 *.dsc
 .pnpm-debug.log
 staging/
+test/

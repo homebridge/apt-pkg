@@ -1,0 +1,55 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE:-library/debian:11.7-slim}
+
+ARG QEMU_ARCH
+ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
+
+COPY test/qemu/qemu-${QEMU_ARCH}-static /usr/bin/
+
+#################
+# Install Systemd
+#################
+ENV container docker
+RUN sudo apt-get update -y  && \
+  sudo apt-get install  -y --no-install-recommends systemd-sysv && \
+  sudo apt-get clean && \
+  sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# We never want these to run in a container
+# Feel free to edit the list but this is the one we used
+RUN systemctl mask \
+  dev-hugepages.mount \
+  sys-fs-fuse-connections.mount \
+  sys-kernel-config.mount \
+  display-manager.service \
+  getty@.service \
+  systemd-logind.service \
+  systemd-remount-fs.service \
+  getty.target \
+  graphical.target
+
+COPY image/balena/entry.sh /usr/bin/entry.sh
+COPY image/balena/balena.service /etc/systemd/system/balena.service
+
+RUN systemctl enable /etc/systemd/system/balena.service
+
+STOPSIGNAL 37
+ENTRYPOINT ["/usr/bin/entry.sh"]
+ENV INITSYSTEM on
+######################
+# Finish setup systemd
+######################
+
+RUN curl -sSfL https://repo.homebridge.io/KEY.gpg | sudo gpg --dearmor | sudo tee /usr/share/keyrings/homebridge.gpg  > /dev/null
+RUN echo "deb [signed-by=/usr/share/keyrings/homebridge.gpg] https://repo.homebridge.io stable main" | sudo tee /etc/apt/sources.list.d/homebridge.list > /dev/null
+RUN sudo apt-get update
+RUN sudo apt-get install homebridge wget
+RUN chown -R homebridge: /var/lib/homebridge /opt/homebridge
+
+RUN dpkg -l homebridge
+RUN sleep 30
+RUN sudo hb-service view
+RUN sudo hb-service status
+RUN sudo hb-service view
+
+CMD ["bash", "sudo hb-service start"]

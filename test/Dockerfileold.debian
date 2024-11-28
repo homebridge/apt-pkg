@@ -1,0 +1,25 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE:-library/debian:bookworm-slim}
+
+ARG QEMU_ARCH
+ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
+
+COPY test/qemu/qemu-${QEMU_ARCH}-static /usr/bin/
+
+# RUN apt-get update && apt-get install -y gcc g++ make python3 curl
+
+# RUN [ "$(uname -m)" = "x86_64" ] && apt-get install -y g++-multilib gcc-multilib || echo "ok"
+
+## Linux 32 bit support was dropped with NodeJS 18.4.0
+
+# ENV NODE_VERSION 18.18.2
+
+RUN curl -sSfL https://repo.homebridge.io/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/homebridge.gpg 
+RUN echo "deb [signed-by=/usr/share/keyrings/homebridge.gpg] https://repo.homebridge.io stable main" | sudo tee /etc/apt/sources.list.d/homebridge.list > /dev/null
+RUN sudo apt-get update
+RUN sudo apt-get install -y homebridge
+RUN dpkg -l homebridge
+RUN sleep 30
+RUN sudo hb-service view
+RUN sudo hb-service status
+RUN sudo hb-service view
