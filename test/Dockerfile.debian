@@ -28,8 +28,8 @@ RUN systemctl mask \
   getty.target \
   graphical.target
 
-COPY image/balena/entry.sh /usr/bin/entry.sh
-COPY image/balena/balena.service /etc/systemd/system/balena.service
+COPY test/balena/entry.sh /usr/bin/entry.sh
+COPY test/balena/balena.service /etc/systemd/system/balena.service
 
 RUN systemctl enable /etc/systemd/system/balena.service
 

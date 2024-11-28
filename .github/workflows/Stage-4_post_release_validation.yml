@@ -112,7 +112,3 @@ jobs:
     - name: Linux - Build Docker Image
       run: |
         docker build -f test/Dockerfile.debian --build-arg BASE_IMAGE=${{ matrix.BASE_IMAGE }} --build-arg QEMU_ARCH=${{ matrix.QEMU_ARCH }} -t package-build --platform=linux/${{ matrix.QEMU_ARCH }} .
-
-    - name: Linux - Build Package
-      run: |
-        docker run --rm -v $(pwd):/repo -e PKG_RELEASE_TYPE="${{ needs.create_draft_prerelease.outputs.release_type }}" -e PKG_RELEASE_VERSION="${{ needs.create_draft_prerelease.outputs.version }}" package-build
