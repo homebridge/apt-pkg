@@ -43,6 +43,7 @@ jobs:
 
   validate_rpi:
     name: Validate APT Release on RPI
+    needs: on-success
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
