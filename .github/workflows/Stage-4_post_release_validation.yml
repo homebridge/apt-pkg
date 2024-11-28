@@ -17,7 +17,7 @@ jobs:
       - run: echo '::info::The triggering workflow passed or manual dispatch was used.'
 
   validate_ubuntu:
-    name: Validate APT Release on Ubuntu
+    name: Validate Ubuntu APT Releases
     needs: on-success
     strategy:
       fail-fast: false
@@ -41,7 +41,7 @@ jobs:
           sudo hb-service view
 
   validate_rpi:
-    name: Validate APT Release on RPI
+    name: Validate RPI APT Release
     needs: on-success
     runs-on: ubuntu-latest
     strategy:
@@ -65,12 +65,14 @@ jobs:
         cpu: ${{ matrix.cpu }}
         image_additional_mb: 5000
         commands: |
+          df -k
           curl -sSfL https://repo.homebridge.io/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/homebridge.gpg
           echo "deb [signed-by=/usr/share/keyrings/homebridge.gpg] https://repo.homebridge.io stable main" | sudo tee /etc/apt/sources.list.d/homebridge.list > /dev/null
           sudo apt-get update
           sudo apt-get install -y homebridge
           dpkg -l homebridge
+          sleep 30
           sudo hb-service status
           sudo hb-service view
-          df -k
+          
 
