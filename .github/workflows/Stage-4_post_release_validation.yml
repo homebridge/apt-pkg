@@ -16,10 +16,15 @@ jobs:
     steps:
       - run: echo '::info::The triggering workflow passed or manual dispatch was used.'
 
-  validate:
-    name: Validate Release
-    runs-on: ubuntu-latest
+  validate_ubuntu:
+    name: Validate APT Release on Ubuntu
     needs: on-success
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18.x, 20.x, 22.x, 23.x]
+        os: [ubuntu-latest, ubuntu-24.04, ubuntu-22.04, ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Install Homebridge
         run: |
@@ -35,3 +40,35 @@ jobs:
         run: |
           sudo hb-service status
           sudo hb-service view
+
+  validate_rpi:
+    name: Validate APT Release on RPI
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [armv6l, armv7l, aarch64]
+        include:
+        - arch: armv6l
+          cpu: arm1176
+          base_image: raspios_lite:latest
+        - arch: armv7l
+          cpu: cortex-a7
+          base_image: raspios_lite:latest
+        - arch: aarch64
+          cpu: cortex-a53
+          base_image: raspios_lite_arm64:latest
+    steps:
+    - uses: pguyot/arm-runner-action@HEAD
+      with:
+        base_image: ${{ matrix.base_image }}
+        cpu: ${{ matrix.cpu }}
+        commands: |
+          curl -sSfL https://repo.homebridge.io/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/homebridge.gpg
+          echo "deb [signed-by=/usr/share/keyrings/homebridge.gpg] https://repo.homebridge.io stable main" | sudo tee /etc/apt/sources.list.d/homebridge.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y homebridge
+          dpkg -l homebridge
+          sudo hb-service status
+          sudo hb-service view
+
