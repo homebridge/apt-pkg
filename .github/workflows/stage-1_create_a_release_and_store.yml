@@ -29,10 +29,10 @@ jobs:
       - name: Merge Username
         id: merge_username
         run: |
-          if [ "${{ github.event.head_commit.author.username }}" ]; then
-            USERNAME=${{ github.event.head_commit.author.username }}
+          if [ "${{ github.event.commits[0]author.username }}" ]; then
+            USERNAME=${{ github.event.commits[0]author.username }}
           else
-            USERNAME='NorthernMan54'
+            USERNAME=''
           fi
           echo "Using USERNAME: $USERNAME"
           echo "username=$USERNAME" >> "$GITHUB_OUTPUT"
@@ -49,9 +49,9 @@ jobs:
           echo "increment=$INCREMENT" >> "$GITHUB_OUTPUT"
 
   create_draft_prerelease:
-    # Only run this job if the username is NorthernMan54
+    # Only run this job if the username is dependabot[bot]
     needs: merge_inputs
-    if: ${{ needs.merge_inputs.outputs.username == 'NorthernMan54' }}
+    if: ${{ needs.merge_inputs.outputs.username == 'dependabot[bot]' }}
     permissions:
       # write permission is required to create a github release
       contents: write
