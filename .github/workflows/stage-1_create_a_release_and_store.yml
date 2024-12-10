@@ -29,8 +29,8 @@ jobs:
       - name: Merge Username
         id: merge_username
         run: |
-          if [ "${{ github.event.commits[0]author.username }}" ]; then
-            USERNAME=${{ github.event.commits[0]author.username }}
+          if [ "${{ github.event.commits[0].author.username }}" ]; then
+            USERNAME=${{ github.event.commits[0].author.username }}
           else
             USERNAME=''
           fi
