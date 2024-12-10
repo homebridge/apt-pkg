@@ -32,7 +32,7 @@ jobs:
           if [ "${{ github.event.commits[0].author.username }}" ]; then
             USERNAME=${{ github.event.commits[0].author.username }}
           else
-            USERNAME=''
+            USERNAME='dependabot[bot]'
           fi
           echo "Using USERNAME: $USERNAME"
           echo "username=$USERNAME" >> "$GITHUB_OUTPUT"
