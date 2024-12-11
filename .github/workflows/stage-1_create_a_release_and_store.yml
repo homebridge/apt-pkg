@@ -109,7 +109,7 @@ jobs:
 
           - name: debian-arm32v6
             os: ubuntu-latest
-            BASE_IMAGE: balenalib/raspberry-pi-debian:bullseye
+            BASE_IMAGE: balenalib/raspberrypi3-debian:bullseye
             QEMU_ARCH: arm
 
           - name: debian-arm64v8
