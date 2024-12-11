@@ -74,6 +74,21 @@ jobs:
           scheme: semver
           increment: ${{ needs.merge_inputs.outputs.increment }}
 
+    message_about_not_running:
+      # Only run this job if the username is dependabot[bot]
+      needs: merge_inputs
+      if: ${{ needs.merge_inputs.outputs.username != 'dependabot[bot]' }}
+      permissions:
+        # write permission is required to create a github release
+        contents: write
+        # write permission is required for autolabeler
+        # otherwise, read permission is required at least
+        pull-requests: write
+      runs-on: ubuntu-latest
+      steps:
+        - name: Display Message
+          run: echo "::error::This job is not running automatically because the invoker is not 'dependabot[bot]'." && exit 1
+
   build_package_and_store:
     needs: [create_draft_prerelease]
     name: Build Packages for (${{ matrix.name }}) v${{ needs.create_draft_prerelease.outputs.version }}
