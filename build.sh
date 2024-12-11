@@ -39,7 +39,7 @@ echo "| Package | Version |" >> homebridge_apt_pkg_$NODE_ARCH.manifest
 echo "|:-------:|:-------:|" >> homebridge_apt_pkg_$NODE_ARCH.manifest
 echo "|NodeJS| "$NODE_VERSION "|" >> homebridge_apt_pkg_$NODE_ARCH.manifest
 
-# https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-$armv7l.tar.gz
+# https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-armv7l.tar.gz
 
 if [ ! -f  "node-$NODE_VERSION-linux-$NODE_ARCH.tar.gz" ]; then
   [ "$NODE_ARCH" = "armv6l" -o "$NODE_ARCH" = "x86" ] && 
