@@ -17,6 +17,7 @@ cp -R deb staging
 
 # Hold the NodeJS version to the 20.x LTS stream until 22 goes LTS
 # deb/debian/control `libc6 (>= 2.31)` may need updating as well
+# Supposedly they are using 2.28 - https://github.com/nodejs/node/blob/main/BUILDING.md
 
 NODE_LTS_TAG="Iron"
 # NODE_VERSION="$(curl -s https://nodejs.org/dist/index.json | jq -r --arg NODE_LTS_TAG "${NODE_LTS_TAG}" 'map(select(.lts==$NODE_LTS_TAG))[0].version')"
@@ -26,7 +27,7 @@ BUILD_ARCH=${QEMU_ARCH:-x86_64}
 
 case "$BUILD_ARCH" in \
   x86_64) NODE_ARCH='x64';; \
-  arm) NODE_ARCH='armv6l';; \
+  arm) NODE_ARCH='armv7l';; \
   aarch64) NODE_ARCH='arm64';; \
   i386) NODE_ARCH='x86';; \
   *) echo "unsupported architecture"; exit 1 ;;
@@ -37,6 +38,8 @@ echo >> homebridge_apt_pkg_$NODE_ARCH.manifest
 echo "| Package | Version |" >> homebridge_apt_pkg_$NODE_ARCH.manifest
 echo "|:-------:|:-------:|" >> homebridge_apt_pkg_$NODE_ARCH.manifest
 echo "|NodeJS| "$NODE_VERSION "|" >> homebridge_apt_pkg_$NODE_ARCH.manifest
+
+# https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-$armv7l.tar.gz
 
 if [ ! -f  "node-$NODE_VERSION-linux-$NODE_ARCH.tar.gz" ]; then
   [ "$NODE_ARCH" = "armv6l" -o "$NODE_ARCH" = "x86" ] && 
