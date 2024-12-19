@@ -32,7 +32,7 @@ jobs:
         id: installed-version
         run: |
           dpkg -l homebridge
-          echo "homebridgeversion=\"`dpkg -l homebridge | tail -1 | awk '{ print $3 }'`\"" >> "$GITHUB_OUTPUT"
+          echo "homebridge-version=\"`dpkg -l homebridge | tail -1 | awk '{ print $3 }'`\"" >> "$GITHUB_OUTPUT"
 
       - name: Validate Homebridge
         run: |
