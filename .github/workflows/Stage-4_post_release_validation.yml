@@ -29,9 +29,19 @@ jobs:
           sudo apt-get install -y homebridge
 
       - name: Display APT Pkg Version
-        run: dpkg -l homebridge
+        id: installed-version
+        run: |
+          dpkg -l homebridge
+          echo "homebridgeversion=\"`dpkg -l homebridge | tail -1 | awk '{ print $3 }'`\"" >> "$GITHUB_OUTPUT"
 
       - name: Validate Homebridge
         run: |
           sudo hb-service status
           sudo hb-service view
+
+      - name: List available homebridge-apt-pkg versions
+        run: |
+          sudo apt-cache madison homebridge
+
+      - name: Published
+        run: echo "::notice::Published on APT - ${{ steps.installed-version.outputs.homebridge-version }}"
