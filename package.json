@@ -19,6 +19,6 @@
   "dependencies": {
     "homebridge": "^1.8.4",
     "homebridge-config-ui-x": "^4.68.0",
-    "node": "^22.12.0"
+    "node": "^22.13.0"
   }
 }
